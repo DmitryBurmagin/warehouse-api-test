@@ -99,9 +99,10 @@ class CRUDbase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             if field in obj_data:
                 setattr(db_obj, field, update_data[field])
 
-        session.add(db_obj)
-        await session.commit()
-        await session.refresh(db_obj)
+        if commit:
+            await session.commit()
+            await session.refresh(db_obj)
+
         return db_obj
 
     async def remove(self, db_obj, session: AsyncSession) -> ModelType:
