@@ -1,6 +1,6 @@
 """Модуль для работы с базой данных через SQLAlchemy."""
 
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, BigInteger
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -19,7 +19,7 @@ class PreBase:
         """Автоматически генерирует имя таблицы на основе имени класса."""
         return cls.__name__.lower()
 
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
 
 
 Base = declarative_base(cls=PreBase)
