@@ -4,6 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.schemas.filters import RollsFilter
 
 from app.core.db import Base
 
@@ -120,3 +121,43 @@ class CRUDbase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         await session.commit()
 
         return db_obj
+
+    async def filter(
+        self, session: AsyncSession, filters: RollsFilter
+    ) -> list[ModelType]:
+        """
+        Фильтрует объекты по переданным параметрам.
+
+        Args:
+            - session (AsyncSession): Асинхронная сессия SQLAlchemy.
+            - filters (RollsFilter): Объект фильтров.
+
+        Returns:
+            - list[ModelType]: Найденные объекты.
+        """
+        query = select(self.model)
+
+        if filters.min_length is not None:
+            query = query.where(self.model.length >= filters.min_length)
+        if filters.max_length is not None:
+            query = query.where(self.model.length <= filters.max_length)
+
+        if filters.min_weight is not None:
+            query = query.where(self.model.weight >= filters.min_weight)
+        if filters.max_weight is not None:
+            query = query.where(self.model.weight <= filters.max_weight)
+
+        if filters.added_after is not None:
+            query = query.where(self.model.added_at >= filters.added_after)
+        if filters.added_before is not None:
+            query = query.where(self.model.added_at <= filters.added_before)
+
+        if filters.removed_after is not None:
+            query = query.where(self.model.removed_at >= filters.removed_after)
+        if filters.removed_before is not None:
+            query = query.where(
+                self.model.removed_at <= filters.removed_before
+            )
+
+        result = await session.execute(query)
+        return result.scalars().all()

@@ -2,23 +2,27 @@
 from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List, Optional
 
 from app.core.db import get_async_session
 from app.models.rolls import Rolls
 
 from app.schemas.rolls import RollsCreate, RollsUpdate, RollsResponse
+from app.schemas.filters import RollsFilter
 from app.crud.rolls import CRUDbase
+from app.api.dependencies.filters import get_filter_params
 
 router = APIRouter()
 crud_rolls = CRUDbase[Rolls, RollsCreate, RollsUpdate](Rolls)
 
 
 @router.get(
-    "/", response_model=RollsResponse, response_model_exclude_none=True
+    "/", response_model=List[RollsResponse], response_model_exclude_none=True
 )
-async def get_roll(
-    roll_id: int, session: AsyncSession = Depends(get_async_session)
-) -> RollsResponse:
+async def get_rolls(
+    session: AsyncSession = Depends(get_async_session),
+    filters: Optional[RollsFilter] = Depends(get_filter_params),
+) -> List[RollsResponse]:
     """
     Получить информацию о рулоне по его ID.
 
@@ -27,8 +31,24 @@ async def get_roll(
         - session (AsyncSession): Асинхронная сессия SQLAlchemy.
 
     Returns:
-        - RollsResponse: Данные о рулоне.
+        - List[RollsResponse]: Список рулонов, подходящих под фильтр.
     """
+    if filters is None:
+        filters = RollsFilter()
+
+    return await crud_rolls.filter(session, filters=filters)
+
+
+@router.get(
+    "/{roll_id}",
+    response_model=RollsResponse,
+    response_model_exclude_none=True,
+)
+async def get_roll_by_id(
+    roll_id: int,
+    session: AsyncSession = Depends(get_async_session),
+) -> RollsResponse:
+    """Получить рулон по его ID."""
     roll = await crud_rolls.get(roll_id, session)
     if not roll:
         raise HTTPException(
