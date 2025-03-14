@@ -16,7 +16,9 @@ dependencies = [
     "sqlalchemy[asyncio] (>=2.0.39,<3.0.0)",
     "factory-boy (>=3.3.3,<4.0.0)",
     "faker (>=37.0.0,<38.0.0)",
-    "pydantic-filters (>=0.3.5,<0.4.0)"
+    "pydantic-filters (>=0.3.5,<0.4.0)",
+    "redis[async] (>=5.2.1,<6.0.0)",
+    "aioredis (>=2.0.1,<3.0.0)"
 ]
 
 
@@ -33,8 +35,7 @@ black = "^25.1.0"
 mypy = "^1.15.0"
 pre-commit = "^4.1.0"
 flake8-docstrings = "^1.7.0"
-
-
+types-redis = "^4.6.0.20241004"
 
 [tool.black]
 line-length = 79

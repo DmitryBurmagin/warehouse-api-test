@@ -1,4 +1,5 @@
 """Схема для фильтрации рулонов."""
+
 from datetime import date
 from typing import Optional
 from pydantic_filters import BaseFilter

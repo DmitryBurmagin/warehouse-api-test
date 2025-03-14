@@ -1,4 +1,5 @@
 """Фибрики для генерации случайных данных."""
+
 import factory
 from app.models.rolls import Rolls
 

@@ -1,4 +1,5 @@
 """CRUD, для модели Rolls."""
+
 from typing import Generic, Optional, Type, TypeVar
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
