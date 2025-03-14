@@ -2,7 +2,7 @@
 from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Optional
 
 from app.core.db import get_async_session
 from app.models.rolls import Rolls
@@ -19,10 +19,9 @@ crud_rolls = CRUDbase[Rolls, RollsCreate, RollsUpdate](Rolls)
 @router.get(
     "/", response_model=List[RollsResponse], response_model_exclude_none=True
 )
-async def get_roll(
-    roll_id: int,
+async def get_rolls(
     session: AsyncSession = Depends(get_async_session),
-    filters: RollsFilter = Depends(get_filter_params),
+    filters: Optional[RollsFilter] = Depends(get_filter_params),
 ) -> List[RollsResponse]:
     """
     Получить информацию о рулоне по его ID.
@@ -34,7 +33,28 @@ async def get_roll(
     Returns:
         - List[RollsResponse]: Список рулонов, подходящих под фильтр.
     """
-    return await crud_rolls.filter(session, **filters.dict(exclude_none=True))
+    if filters is None:
+        filters = RollsFilter()
+
+    return await crud_rolls.filter(session, filters=filters)
+
+
+@router.get(
+    "/{roll_id}",
+    response_model=RollsResponse,
+    response_model_exclude_none=True,
+)
+async def get_roll_by_id(
+    roll_id: int,
+    session: AsyncSession = Depends(get_async_session),
+) -> RollsResponse:
+    """Получить рулон по его ID."""
+    roll = await crud_rolls.get(roll_id, session)
+    if not roll:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Рулон не найден"
+        )
+    return roll
 
 
 @router.post("/", response_model=RollsCreate, response_model_exclude_none=True)

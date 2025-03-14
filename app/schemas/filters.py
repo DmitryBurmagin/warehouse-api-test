@@ -1,27 +1,24 @@
-"""Схема фильтров."""
+"""Схема для фильтрации рулонов."""
 from datetime import date
 from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic_filters import BaseFilter
 
 
-class RollsFilter(BaseModel):
-    """Схема для фильтрации рулона."""
+class RollsFilter(BaseFilter):
+    """Схема для фильтрации рулонов."""
 
-    id_min: Optional[int] = Field(None, description="Минимальный ID")
-    id_max: Optional[int] = Field(None, description="Максимальный ID")
-    length_min: Optional[int] = Field(None, description="Минимальная длина")
-    length_max: Optional[int] = Field(None, description="Максимальная длина")
-    weight_min: Optional[int] = Field(None, description="Минимальный вес")
-    weight_max: Optional[int] = Field(None, description="Максимальный вес")
-    added_after: Optional[date] = Field(
-        None, description="Дата добавления после"
-    )
-    added_before: Optional[date] = Field(
-        None, description="Дата добавления до"
-    )
-    deleted_after: Optional[date] = Field(
-        None, description="Дата удаления после"
-    )
-    deleted_before: Optional[date] = Field(
-        None, description="Дата удаления до"
-    )
+    min_length: Optional[float] = None
+    max_length: Optional[float] = None
+
+    min_weight: Optional[float] = None
+    max_weight: Optional[float] = None
+
+    added_after: Optional[date] = None
+    added_before: Optional[date] = None
+
+    removed_after: Optional[date] = None
+    removed_before: Optional[date] = None
+
+    model_config = {
+        "orm_mode": True,
+    }

@@ -1,32 +1,66 @@
 """Фильтры."""
 from datetime import date
-from typing import Optional
+from typing import Optional, Annotated
+from fastapi import Query
 
 from app.schemas.filters import RollsFilter
 
 
 def get_filter_params(
-    id_min: Optional[int] = None,
-    id_max: Optional[int] = None,
-    length_min: Optional[int] = None,
-    length_max: Optional[int] = None,
-    weight_min: Optional[int] = None,
-    weight_max: Optional[int] = None,
-    added_after: Optional[date] = None,
-    added_before: Optional[date] = None,
-    deleted_after: Optional[date] = None,
-    deleted_before: Optional[date] = None,
+    min_length: Annotated[
+        Optional[float],
+        Query(description="Минимальная длина рулона (м)", example=10.5, ge=0),
+    ] = None,
+    max_length: Annotated[
+        Optional[float],
+        Query(description="Максимальная длина рулона (м)", example=20.0, ge=0),
+    ] = None,
+    min_weight: Annotated[
+        Optional[float],
+        Query(description="Минимальный вес рулона (кг)", example=150.0, gt=0),
+    ] = None,
+    max_weight: Annotated[
+        Optional[float],
+        Query(description="Максимальный вес рулона (кг)", example=300.0, gt=0),
+    ] = None,
+    added_after: Annotated[
+        Optional[date],
+        Query(
+            description="Фильтр по дате добавления (>=)", example="2024-01-01"
+        ),
+    ] = None,
+    added_before: Annotated[
+        Optional[date],
+        Query(
+            description="Фильтр по дате добавления (<=)", example="2024-12-31"
+        ),
+    ] = None,
+    removed_after: Annotated[
+        Optional[date],
+        Query(
+            description="Фильтр по дате удаления (>=)", example="2024-06-01"
+        ),
+    ] = None,
+    removed_before: Annotated[
+        Optional[date],
+        Query(
+            description="Фильтр по дате удаления (<=)", example="2024-06-30"
+        ),
+    ] = None,
 ) -> RollsFilter:
-    """Зависимости для фильров."""
+    """
+    Зависимость для фильтрации рулонов.
+
+    Возвращает:
+        RollsFilter: Объект фильтра с применёнными параметрами.
+    """
     return RollsFilter(
-        id_min=id_min,
-        id_max=id_max,
-        length_min=length_min,
-        length_max=length_max,
-        weight_min=weight_min,
-        weight_max=weight_max,
+        min_length=min_length,
+        max_length=max_length,
+        min_weight=min_weight,
+        max_weight=max_weight,
         added_after=added_after,
         added_before=added_before,
-        deleted_after=deleted_after,
-        deleted_before=deleted_before,
+        removed_after=removed_after,
+        removed_before=removed_before,
     )

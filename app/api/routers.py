@@ -8,4 +8,4 @@ from .rolls import router as rolls_router
 main_router = APIRouter()
 
 
-main_router.include_router(rolls_router, tags=["rolls"])
+main_router.include_router(rolls_router, prefix="/rolls", tags=["rolls"])

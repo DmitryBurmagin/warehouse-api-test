@@ -1,3 +1,4 @@
 from app.core.db import Base  # noqa
+from app.models.rolls import Rolls  # noqa
 
-target_metadata = Base.metadata
+__all__ = ["Base", "Rolls"]
