@@ -1,4 +1,5 @@
 """Модель руллонов."""
+
 from datetime import datetime as dt
 
 from sqlalchemy import Column, DateTime, Float

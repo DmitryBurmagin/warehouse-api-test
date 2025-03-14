@@ -1,4 +1,5 @@
 """Фильтры."""
+
 from datetime import date
 from typing import Optional, Annotated
 from fastapi import Query

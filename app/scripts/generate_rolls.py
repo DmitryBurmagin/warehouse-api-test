@@ -1,4 +1,5 @@
 """Генерируем рулоны."""
+
 import asyncio
 from app.tests.factories.rolls import RollsFactory
 from app.core.db import AsyncSessionLocal

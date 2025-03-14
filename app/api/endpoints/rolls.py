@@ -1,8 +1,10 @@
 """Модуль API-роутов для работы с рулонами металла."""
+
 from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
+from datetime import datetime as dt
 
 from app.core.db import get_async_session
 from app.models.rolls import Rolls
@@ -11,6 +13,7 @@ from app.schemas.rolls import RollsCreate, RollsUpdate, RollsResponse
 from app.schemas.filters import RollsFilter
 from app.crud.rolls import CRUDbase
 from app.api.dependencies.filters import get_filter_params
+from app.services.statistics import StatisticsService
 
 router = APIRouter()
 crud_rolls = CRUDbase[Rolls, RollsCreate, RollsUpdate](Rolls)
@@ -71,6 +74,8 @@ async def create_rolls(
     Returns:
         - RollsResponse: Данные созданного рулона.
     """
+    service = StatisticsService(session)
+    await service.invalidate_cache()
     return await crud_rolls.create(roll, session)
 
 
@@ -98,6 +103,8 @@ async def update_roll(
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND, detail="Рулон не найден"
         )
+    service = StatisticsService(session)
+    await service.invalidate_cache()
     return await crud_rolls.update(db_roll, roll_in, session)
 
 
@@ -110,7 +117,7 @@ async def delete_roll(
     roll_id: int, session: AsyncSession = Depends(get_async_session)
 ) -> RollsResponse:
     """
-    Удалить рулон по ID.
+    Удалить рулон по ID (присвоить дату удаления).
 
     Args:
         - roll_id (int): ID рулона для удаления.
@@ -124,4 +131,9 @@ async def delete_roll(
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND, detail="Рулон не найден"
         )
-    return await crud_rolls.remove(db_roll, session)
+    db_roll.removed_at = dt.utcnow()
+    await session.commit()
+    await session.refresh(db_roll)
+    service = StatisticsService(session)
+    await service.invalidate_cache()
+    return db_roll

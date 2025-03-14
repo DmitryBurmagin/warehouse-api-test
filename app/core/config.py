@@ -19,6 +19,10 @@ class Settings(BaseSettings):
     postgres_port: int
     database_url: str
 
+    redis_host: str
+    redis_port: int
+    redis_db: int = 0
+
     debug: bool = True
     secret_key: str
 

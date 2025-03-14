@@ -1,10 +1,11 @@
 """add rolls
 
 Revision ID: 282345896c6c
-Revises: 
+Revises:
 Create Date: 2025-03-14 16:42:48.368172
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
