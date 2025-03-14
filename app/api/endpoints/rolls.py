@@ -1,7 +1,6 @@
 """Модуль API-роутов для работы с рулонами металла."""
 
-from http import HTTPStatus
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 from datetime import datetime as dt
@@ -55,7 +54,7 @@ async def get_roll_by_id(
     roll = await crud_rolls.get(roll_id, session)
     if not roll:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail="Рулон не найден"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Рулон не найден"
         )
     return roll
 
@@ -101,7 +100,7 @@ async def update_roll(
     db_roll = await crud_rolls.get(roll_id, session)
     if not db_roll:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail="Рулон не найден"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Рулон не найден"
         )
     service = StatisticsService(session)
     await service.invalidate_cache()
@@ -129,7 +128,7 @@ async def delete_roll(
     db_roll = await crud_rolls.get(roll_id, session)
     if not db_roll:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail="Рулон не найден"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Рулон не найден"
         )
     db_roll.removed_at = dt.utcnow()
     await session.commit()
