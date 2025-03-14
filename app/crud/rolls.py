@@ -120,3 +120,20 @@ class CRUDbase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         await session.commit()
 
         return db_obj
+
+    async def filter(
+        self, session: AsyncSession, **filters
+    ) -> list[ModelType]:
+        """
+        Фильтрует объекты по переданным параметрам.
+
+        Args:
+            - session (AsyncSession): Асинхронная сессия SQLAlchemy.
+            - filters (dict): Фильтры в виде ключ-значение.
+
+        Returns:
+            - list[ModelType]: Найденные объекты.
+        """
+        filter = select(self.model).filter_by(**filters)
+        result = await session.execute(filter)
+        return result.scalars().first()
