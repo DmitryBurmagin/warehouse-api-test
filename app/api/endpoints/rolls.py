@@ -25,16 +25,7 @@ async def get_rolls(
     session: AsyncSession = Depends(get_async_session),
     filters: Optional[RollsFilter] = Depends(get_filter_params),
 ) -> List[RollsResponse]:
-    """
-    Получить информацию о рулоне по его ID.
-
-    Args:
-        - roll_id (int): ID рулона.
-        - session (AsyncSession): Асинхронная сессия SQLAlchemy.
-
-    Returns:
-        - List[RollsResponse]: Список рулонов, подходящих под фильтр.
-    """
+    """Получить информацию о рулонах с применением фильтров."""
     if filters is None:
         filters = RollsFilter()
 
@@ -50,7 +41,16 @@ async def get_roll_by_id(
     roll_id: int,
     session: AsyncSession = Depends(get_async_session),
 ) -> RollsResponse:
-    """Получить рулон по его ID."""
+    """
+    Получить информацию о рулоне по его ID.
+
+    Args:
+        - roll_id (int): ID рулона.
+        - session (AsyncSession): Асинхронная сессия SQLAlchemy.
+
+    Returns:
+        - List[RollsResponse]: Список рулонов, подходящих под фильтр.
+    """
     roll = await crud_rolls.get(roll_id, session)
     if not roll:
         raise HTTPException(

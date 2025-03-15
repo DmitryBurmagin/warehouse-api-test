@@ -10,42 +10,62 @@ from app.schemas.filters import RollsFilter
 def get_filter_params(
     min_length: Annotated[
         Optional[float],
-        Query(description="Минимальная длина рулона (м)", example=10.5, ge=0),
+        Query(
+            description="Минимальная длина рулона (м)",
+            examples={"normal": {"value": 10.5}},
+            ge=0,
+        ),
     ] = None,
     max_length: Annotated[
         Optional[float],
-        Query(description="Максимальная длина рулона (м)", example=20.0, ge=0),
+        Query(
+            description="Максимальная длина рулона (м)",
+            examples={"normal": {"value": 20.0}},
+            ge=0,
+        ),
     ] = None,
     min_weight: Annotated[
         Optional[float],
-        Query(description="Минимальный вес рулона (кг)", example=150.0, gt=0),
+        Query(
+            description="Минимальный вес рулона (кг)",
+            examples={"normal": {"value": 150.0}},
+            gt=0,
+        ),
     ] = None,
     max_weight: Annotated[
         Optional[float],
-        Query(description="Максимальный вес рулона (кг)", example=300.0, gt=0),
+        Query(
+            description="Максимальный вес рулона (кг)",
+            examples={"normal": {"value": 300.0}},
+            gt=0,
+        ),
     ] = None,
     added_after: Annotated[
         Optional[date],
         Query(
-            description="Фильтр по дате добавления (>=)", example="2024-01-01"
+            description="Фильтр по дате добавления (>=)",
+            examples={"normal": {"value": "2024-01-01"}},
         ),
     ] = None,
     added_before: Annotated[
         Optional[date],
         Query(
-            description="Фильтр по дате добавления (<=)", example="2024-12-31"
+            description="Фильтр по дате добавления (<=)",
+            examples={"normal": {"value": "2024-12-31"}},
         ),
     ] = None,
     removed_after: Annotated[
         Optional[date],
         Query(
-            description="Фильтр по дате удаления (>=)", example="2024-06-01"
+            description="Фильтр по дате удаления (>=)",
+            examples={"normal": {"value": "2024-06-01"}},
         ),
     ] = None,
     removed_before: Annotated[
         Optional[date],
         Query(
-            description="Фильтр по дате удаления (<=)", example="2024-06-30"
+            description="Фильтр по дате удаления (<=)",
+            examples={"normal": {"value": "2024-06-30"}},
         ),
     ] = None,
 ) -> RollsFilter:
